@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamifyEdu - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/index.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+            <div class="brand-text">
+                <h2>Aluno destaque</h2>
+                <p>Sistema aluno destaque</p>
+            </div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="setActive(this, 'section-dashboard')">
+                <i class="fa-solid fa-border-all"></i> Dashboard
+            </li>
+            <li class="nav-item" onclick="setActive(this, 'section-turmas')">
+                <i class="fa-solid fa-users"></i> Turmas
+            </li>
+            <li class="nav-item" onclick="setActive(this, 'section-alunos')">
+                <i class="fa-solid fa-user-graduate"></i> Alunos
+            </li>
+            <li class="nav-item" onclick="setActive(this, 'section-destaques')">
+                <i class="fa-solid fa-trophy"></i> Alunos Destaque
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <strong>Versão 1.0</strong><br>Plataforma de aluno destaque
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <section id="section-dashboard" class="page-section active-section">
+            <header>
+                <h1>Dashboard</h1>
+                <p>Visão geral da plataforma</p>
+            </header>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total de Turmas</h3>
+                        <div class="value" id="dash_total_turmas">0</div>
+                    </div>
+                    <div class="icon-box icon-blue"><i class="fa-solid fa-users"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total de Alunos</h3>
+                        <div class="value" id="dash_total_alunos">0</div>
+                    </div>
+                    <div class="icon-box icon-orange"><i class="fa-solid fa-user-graduate"></i></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Alunos Destaques</h3>
+                        <div class="value" id="dash_total_destaques">0</div>
+                    </div>
+                    <div class="icon-box icon-purple"><i class="fa-solid fa-trophy"></i></div>
+                </div>
+            </div>
+
+            <div class="bottom-grid">
+                <div class="panel">
+                <div class="panel-header" style="color: var(--yellow);">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span style="color: var(--text-main);">Top Performers</span>
+                </div>
+                
+                <div class="filters">
+                    <select id="filtro_tp_turma" onchange="renderizarDados()">
+                        <option value="todas">Todas as turmas</option>
+                    </select>
+                    <select id="filtro_tp_qtd" onchange="renderizarDados()">
+                        <option value="3">Top 3</option>
+                        <option value="5" selected>Top 5</option>
+                        <option value="10">Top 10</option>
+                    </select>
+                </div>
+
+                <div id="lista_top_performers">
+                    <div class="empty-state">
+                        Nenhuma pontuação registrada ainda
+                    </div>
+                </div>
+            </div>
+
+                <div class="panel">
+                    <div class="panel-header" style="color: var(--green);">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span style="color: var(--text-main);">Estatísticas</span>
+                    </div>
+                    <ul class="stat-list">
+                        <li><span>Total de Alunos Ouro</span><span id="alunos_ouro">0</span></li>
+                        <li><span>Total de Alunos Prata</span><span id="alunos_prata">0</span></li>
+                        <li><span>Total de Alunos Bronze</span><span id="alunos_bronze">0</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-turmas" class="page-section hidden">
+            <header>
+                <h1>Gestão de Turmas</h1>
+                <p>Gerencie turmas, alunos e requisitos de premiação</p>
+            </header>
+
+            <div class="bottom-grid" style="grid-template-columns: 1fr 2fr;">
+                
+                <div class="panel">
+                    <div class="panel-header" style="color: var(--orange);">
+                        <i class="fa-solid fa-chalkboard"></i>
+                        <span style="color: var(--text-main);">Turmas</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                        <select id="select_turma" style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid #ddd;"></select>
+                        <button class="btn-danger" onclick="removerTurma()" title="Excluir Turma Selecionada"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 25px;">
+                        <input type="text" id="nova_turma_nome" placeholder="Nome da nova turma" class="form-input">
+                        <button class="btn-primary" style="padding: 8px;" onclick="adicionarTurma()"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 25px;">
+
+                    <div class="panel-header" style="color: var(--blue);">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span style="color: var(--text-main);">Requisitos de Premiação</span>
+                    </div>
+                    <div class="form-group" id="lista_requisitos_base">
+                        <label><input type="checkbox" id="req_nota" checked> Exigir Nota Mínima (95)</label>
+                        <label><input type="checkbox" id="req_presenca" checked> Exigir Presença</label>
+                        <label><input type="checkbox" id="req_ead" checked> Exigir EAD (100%)</label>
+                    </div>
+                    
+                    <div id="lista_requisitos_extras" style="margin-top: 10px;"></div>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 15px; margin-bottom: 25px;">
+                        <input type="text" id="novo_req_nome" placeholder="Novo requisito extra" class="form-input">
+                        <button class="btn-primary" style="padding: 8px;" onclick="adicionarRequisitoExtra()"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 25px;">
+
+                    <div class="panel-header" style="color: var(--text-main);">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Adicionar Aluno</span>
+                    </div>
+                    <div class="add-form">
+                        <input type="text" id="novo_nome" placeholder="Nome do Aluno" class="form-input">
+                        <input type="number" id="novo_nota" placeholder="Nota (0-100)" class="form-input">
+                        <input type="number" id="novo_presenca" placeholder="Presença %" class="form-input">
+                        <input type="number" id="novo_ead" placeholder="EAD Concluído %" class="form-input">
+                        
+                        <div id="form_requisitos_extras" style="margin: 10px 0;"></div>
+
+                        <button onclick="adicionarAluno()" class="btn-primary">Cadastrar Aluno</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; color: var(--green);">
+                        <div>
+                            <i class="fa-solid fa-list-check"></i>
+                            <span style="color: var(--text-main);">Lista da Turma</span>
+                        </div>
+                        
+                        <select id="ordenacao_alunos" class="form-input" style="width: auto; padding: 6px;" onchange="renderizarDados()">
+                            <option value="alfabetica">Ordem Alfabética</option>
+                            <option value="premiacao">Por Premiação</option>
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Nota</th>
+                                    <th>Presença</th>
+                                    <th>EAD</th>
+                                    <th>Medalha</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela_alunos">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-alunos" class="page-section hidden">
+            <header><h1>Alunos</h1><p>Em construção...</p></header>
+        </section>
+        <section id="section-destaques" class="page-section hidden">
+            <header><h1>Alunos Destaque</h1><p>Em construção...</p></header>
+        </section>
+
+    </main>
+
+    <script src="/assets/js/index.js"></script>
+</body>
+</html>
