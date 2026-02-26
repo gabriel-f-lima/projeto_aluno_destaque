@@ -25,12 +25,7 @@ let turmas = [
 
 let requisitosExtras = []; // Ex: { id: "req_ext_1", nome: "Comportamento" }
 
-let alunos = [
-    { id: 1, turmaId: "1", nome: "Maria Oliveira", nota: 95, presenca: 98, ead: 100, extras: {} },
-    { id: 2, turmaId: "1", nome: "João Silva", nota: 96, presenca: 100, ead: 100, extras: {} },
-    { id: 3, turmaId: "1", nome: "Carlos Santos", nota: 95, presenca: 95, ead: 100, extras: {} },
-    { id: 4, turmaId: "1", nome: "Ana Paula", nota: 80, presenca: 90, ead: 50, extras: {} },
-];
+let alunos = [];
 
 // Event Listeners Base
 document.getElementById('req_nota').addEventListener('change', renderizarDados);
