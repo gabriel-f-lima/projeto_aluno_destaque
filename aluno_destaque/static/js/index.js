@@ -244,7 +244,7 @@ function renderizarDados() {
     renderizarTopPerformers();
 }
 
-function adicionarAluno() {
+async function adicionarAluno() {
     const nome = document.getElementById('novo_nome').value.trim();
     const nota = parseInt(document.getElementById('novo_nota').value);
     const presenca = parseInt(document.getElementById('novo_presenca').value);
@@ -260,29 +260,53 @@ function adicionarAluno() {
         return;
     }
 
-    // Coleta as respostas dos requisitos extras
-    let extrasAluno = {};
-    requisitosExtras.forEach(req => {
-        const checkbox = document.getElementById(`check_${req.id}`);
-        extrasAluno[req.id] = checkbox ? checkbox.checked : false;
-    });
+    try {
+        // 1. Envia os dados básicos para a Rota de Cadastro
+        const resCadastro = await fetch('/aluno/cadastrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome: nome, curso_id: turmaId })
+        });
+        
+        const dadosCadastro = await resCadastro.json();
 
-    const novoId = alunos.length > 0 ? Math.max(...alunos.map(a => a.id)) + 1 : 1;
+        // Se o cadastro deu certo, pegamos o ID gerado pelo banco para lançar as notas
+        if (resCadastro.ok && dadosCadastro.id) {
+            
+            // 2. Envia as notas para a Rota de Notas usando o ID novo
+            const resNotas = await fetch(`/aluno/${dadosCadastro.id}/notas`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nota: nota,
+                    presenca: presenca,
+                    cursos_ead: ead
+                })
+            });
 
-    alunos.push({ 
-        id: novoId, 
-        turmaId: turmaId, 
-        nome: nome, 
-        nota: nota, 
-        presenca: presenca, 
-        ead: ead,
-        extras: extrasAluno
-    });
+            if (resNotas.ok) {
+                alert("Aluno e notas salvos com sucesso no banco de dados!");
+                
+                // Limpa os campos da tela
+                document.getElementById('novo_nome').value = '';
+                document.getElementById('novo_nota').value = '';
+                document.getElementById('novo_presenca').value = '';
+                document.getElementById('novo_ead').value = '';
+                
+                // ATENÇÃO: Aqui precisaremos de uma função para recarregar a lista de alunos do banco
+                // Por enquanto, vou manter sua lógica local para a tela atualizar
+                // renderizarDados(); 
+            } else {
+                alert("Erro ao salvar as notas.");
+            }
+        } else {
+            alert("Erro ao cadastrar aluno: " + dadosCadastro.erro);
+        }
 
-    // Limpa os inputs
-    document.querySelectorAll('.add-form input[type="text"], .add-form input[type="number"]').forEach(input => input.value = '');
-    
-    renderizarDados();
+    } catch (erro) {
+        console.error("Erro na comunicação com o servidor:", erro);
+        alert("Ocorreu um erro ao tentar salvar no banco de dados.");
+    }
 }
 
 function removerAluno(id) {
